@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 #include <curl/curl.h>
-
+#include <map>
+#include <vector>
 using namespace std;
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
@@ -28,25 +29,70 @@ string fetchHTML(const string& url) {
     return response;
 }
 
-string get_td(string tr) {
-    size_t pos = 0;
-    while (tr.find("<td>", pos) && pos != string::npos) {
+vector<string> get_td(string tr) {
 
+
+    size_t pos = 0;
+    vector<string> values;
+    while ((pos = tr.find("<span class", pos)) != string::npos)
+    {
+        size_t start = pos + 17; // length of <span class="c2">
+        size_t end = tr.find("</span>", start);
+
+        string value = tr.substr(start, end - start);
+
+        values.push_back(value);
+        pos = end + 7; // move past </span>
     }
+    
+    return values;
 }
 
 int main() {
     string url = "https://docs.google.com/document/d/e/2PACX-1vSvM5gDlNvt7npYHhp_XfsJvuntUhq184By5xO_pA4b_gCWeXb6dM6ZxwN8rE6S4ghUsCj2VKR21oEP/pub";
-
     string html = fetchHTML(url);
+    
+    vector<string> values = get_td(html);
+    values.erase(values.begin(), values.begin() + 5);
 
-    while(ht)
-    html.find("<td>")
+    map<pair<int, int>, string> positions;
+    int max_x = 0;
+    int max_y = 0;
+    cout << values.size()<<endl;
+    for (int i = 0; i < values.size(); i += 3)
+    {
+        cout << i << endl;
+        
+        int x = stoi(values[i]);
+        string ch = values[i + 1];
+        int y = stoi(values[i + 2]);
 
+        positions[{x, y}] = ch;
 
+        if (x > max_x)
+            max_x = x;
+        if (y > max_y)
+            max_y = y;
+    }
+    
+    vector<vector<string>> grid(max_y + 1,vector<string>(max_x + 1, " "));
+    for (auto& entry : positions)
+    {
+        int x = entry.first.first;
+        int y = entry.first.second;
+        string ch = entry.second;
 
-
-
+        grid[y][x] = ch;
+    }
+    for (const auto& row : grid)
+    {
+        for (const auto& cell : row)
+        {
+            cout << cell;
+        }
+        cout << endl;
+    }
+    cout << "end" << endl;
     system("pause > 0");
 
     return 0;
