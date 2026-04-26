@@ -1,5 +1,5 @@
 Requirements to run the code: 
-Visual studio 2026 with C++ installed
+Visual studio 2026 with C++ installed |
 vcpkg with curl
 
 For the curl library:
