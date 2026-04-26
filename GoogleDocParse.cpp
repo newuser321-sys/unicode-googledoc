@@ -3,6 +3,7 @@
 #include <curl/curl.h>
 #include <map>
 #include <vector>
+#include <windows.h>
 using namespace std;
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
@@ -34,9 +35,9 @@ vector<string> get_td(string tr) {
 
     size_t pos = 0;
     vector<string> values;
-    while ((pos = tr.find("<span class", pos)) != string::npos)
+    while ((pos = tr.find("<td", pos)) != string::npos)
     {
-        size_t start = pos + 17; // length of <span class="c2">
+        size_t start = pos + 70; // length of <td>
         size_t end = tr.find("</span>", start);
 
         string value = tr.substr(start, end - start);
@@ -49,20 +50,19 @@ vector<string> get_td(string tr) {
 }
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
+
     string url = "https://docs.google.com/document/d/e/2PACX-1vSvM5gDlNvt7npYHhp_XfsJvuntUhq184By5xO_pA4b_gCWeXb6dM6ZxwN8rE6S4ghUsCj2VKR21oEP/pub";
     string html = fetchHTML(url);
     
     vector<string> values = get_td(html);
-    values.erase(values.begin(), values.begin() + 5);
+    values.erase(values.begin(), values.begin() + 3);
 
     map<pair<int, int>, string> positions;
     int max_x = 0;
     int max_y = 0;
-    cout << values.size()<<endl;
     for (int i = 0; i < values.size(); i += 3)
     {
-        cout << i << endl;
-        
         int x = stoi(values[i]);
         string ch = values[i + 1];
         int y = stoi(values[i + 2]);
@@ -92,7 +92,6 @@ int main() {
         }
         cout << endl;
     }
-    cout << "end" << endl;
     system("pause > 0");
 
     return 0;
