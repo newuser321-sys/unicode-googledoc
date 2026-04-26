@@ -5,8 +5,8 @@ vcpkg with curl
 For the curl library:
 
 1. Install vcpkg
-git clone https://github.com/Microsoft/vcpkg
-cd vcpkg
+git clone https://github.com/Microsoft/vcpkg |
+cd vcpkg |
 bootstrap-vcpkg.bat
 
 2. Integrate with Visual Studio
